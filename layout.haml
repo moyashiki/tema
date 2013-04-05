@@ -1,0 +1,67 @@
+!!! 5
+%html
+  %head
+    %meta{:content => "application/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:content => "text/css", "http-equiv" => "Content-Style-Type"}/
+    %meta{:content => "text/javascript", "http-equiv" => "Content-Script-Type"}/
+    %link{:href => "#{@theme.path}/favicon.ico", :rel => "shortcut icon", :type => "image/vnd.microsoft.icon"}/
+    %link{:href => "#{@theme.path}/favicon.ico", :rel => "icon", :type => "image/vnd.microsoft.icon"}/
+    - if entry?
+      %title
+        = @entry.title
+        \- #{@site.title}
+    - else
+      %title= @site.title
+    %meta{:content => @site.meta_description, :name => "description"}/
+    %meta{:content => @site.meta_keywords, :name => "keywords"}/
+    %link{:href => url("/index.atom"), :rel => "alternate", :title => @title, :type => "application/atom+xml"}/
+    %link{:href => "#{@theme.path}/style.css", :rel => "stylesheet", :type => "text/css"}/
+    %script{:src => "http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js", :type => "text/javascript"}
+    /[if lt IE 9]
+      %script{:src => "http://html5shiv.googlecode.com/svn/trunk/html5.js"}
+    = header
+  %body
+    %header#header
+      .inner
+        .title
+          %h1
+            %a{:href => url("/")}= @site.title
+        %nav
+          %ul
+            - Page.all.each do |page|
+              %li= link_to page.title, url(page.link)
+            %li
+              %a{:href => url("/index.atom")} Feed
+            %li.search
+              %form{:action => url("/search/"), :method => "get"}
+                %input.text_field{:name => "query", :type => "text"}/
+                %button.submit{:onclick => "submit()"} Search
+        %h2= @site.description
+    #wrap
+      #main
+        = yield
+      %aside#sub
+        .tags
+          %h1 Tags
+          %ul
+            - Tag.all.each do |tag|
+              %li.tag
+                %a{:href => url(tag.link)}= tag.name
+        .archive
+          %h1 Archive
+          %ul
+            - months.each do |month|
+              %li.month
+                %a{:href => url("/#{month.year}/#{month.month}/")}
+                  = month.year
+                  \/#{month.month}
+      %footer#footer
+        .copyright
+          Copyright©
+          %a{:href => url("/")}
+            = @site.title
+          All Rights Reserved
+        .poweredby
+          powered by
+          %a{:href => "http://github.com/lokka/lokka"} Lokka
+    = footer
